@@ -4,19 +4,8 @@ import TourCard from '@/components/TourCard'
 import React from 'react'
 import { auth } from '../../../../../auth'
 import { redirect } from 'next/navigation'
-import { prisma } from '../../../../../prisma/prisma'
 
-export async function generateStaticParams() {
-    const tourFirms = await prisma.tourFirm.findMany({
-        select: {
-            id: true,
-        }
-    })
-
-    return tourFirms.map((tourFirm) => ({
-        id: tourFirm.id.toString()
-    }))
-}
+export const dynamic = 'force-dynamic';
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 

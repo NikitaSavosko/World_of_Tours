@@ -11,19 +11,8 @@ import SignOutButton from '@/components/SignOutButton';
 import ChangeAvatar from '@/components/ChangeAvatar';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { prisma } from '../../../../../prisma/prisma';
 
-export async function generateStaticParams() {
-    const userIds = await prisma.user.findMany({
-        select: {
-            id: true,
-        }
-    })
-
-    return userIds.map((userId) => ({
-        id: userId.id.toString()
-    }))
-}
+export const dynamic = 'force-dynamic';
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 

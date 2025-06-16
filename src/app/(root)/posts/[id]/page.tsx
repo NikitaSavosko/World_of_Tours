@@ -6,19 +6,8 @@ import PostLike from '@/components/PostLike'
 import { Image } from '@imagekit/next'
 import { MessageSquareIcon } from 'lucide-react'
 import React from 'react'
-import { prisma } from '../../../../../prisma/prisma'
 
-export async function generateStaticParams() {
-    const posts = await prisma.post.findMany({
-        select: {
-            id: true,
-        }
-    })
-
-    return posts.map((post) => ({
-        id: post.id.toString()
-    }))
-}
+export const dynamic = 'force-dynamic';
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 

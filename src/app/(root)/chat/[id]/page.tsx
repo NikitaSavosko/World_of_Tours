@@ -5,21 +5,10 @@ import DeleteMessage from '@/components/DeleteMessage';
 import UserProfile from '@/components/UserProfile';
 import { format } from 'date-fns';
 import React from 'react'
-import { prisma } from '../../../../../prisma/prisma';
 import { auth } from '../../../../../auth';
 import { redirect } from 'next/navigation';
 
-export async function generateStaticParams() {
-    const userIds = await prisma.user.findMany({
-        select: {
-            id: true,
-        }
-    })
-
-    return userIds.map((userId) => ({
-        id: userId.id.toString()
-    }))
-}
+export const dynamic = 'force-dynamic';
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
 

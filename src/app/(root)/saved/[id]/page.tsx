@@ -2,19 +2,8 @@ import { getAllSaved } from '@/actions/tour-post-action';
 import React from 'react'
 import { auth } from '../../../../../auth';
 import { redirect } from 'next/navigation';
-import { prisma } from '../../../../../prisma/prisma';
 
-export async function generateStaticParams() {
-    const userIds = await prisma.user.findMany({
-        select: {
-            id: true,
-        }
-    })
-
-    return userIds.map((userId) => ({
-        id: userId.id.toString()
-    }))
-}
+export const dynamic = 'force-dynamic';
 
 const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
