@@ -25,7 +25,7 @@ export async function generateStaticParams() {
     }))
 }
 
-const page = async ({ params }: { params: { id: string } }) => {
+const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     const session = await auth()
     if (!session) redirect("/sign-in")
