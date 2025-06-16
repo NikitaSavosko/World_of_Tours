@@ -31,7 +31,7 @@ export default async function page({ params }: PageProps) {
 
     const session = await auth()
     if (!session) redirect("/sign-in");
-    const { id } = await params;
+    const { id } = params;
     const userId = await getUserId()
     const messages = await getChatMessages(userId as string, id)
     const user = await getUser(id)
