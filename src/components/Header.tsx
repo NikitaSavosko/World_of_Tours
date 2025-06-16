@@ -23,7 +23,7 @@ async function Header() {
                     </Link>
                     <div className='flex items-center gap-2 max-md:hidden'>
                         {
-                            session?.user?.role === 'ADMIN' && (
+                            session?.user.role === 'ADMIN' && (
                                 <div>
                                     <Link href='/admin' className='flex flex-row items-center gap-2'>
                                         <Button

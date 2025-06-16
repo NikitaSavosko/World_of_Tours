@@ -50,11 +50,11 @@ export async function getUserByName(name: string) {
 
 export async function getUserId() {
     const session = await auth()
-    if (!session) return null
+    if (!session) return null;
 
-    const user = await getUser(session.user?.id)
+    const user = await getUser(session.user.id)
 
-    if (!user) return null;
+    if (!user) throw new Error("Пользователь не найден")
 
     return user.id
 }
@@ -74,9 +74,9 @@ export async function getAllUser() {
     const session = await auth()
     if (!session) return null
 
-    const user = await getUser(session.user?.id)
+    const user = await getUser(session.user.id)
 
-    if (!user) return null;
+    if (!user) throw new Error("Пользователь не найден")
 
     return prisma.user.findUnique({
         where: {

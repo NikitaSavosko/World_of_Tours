@@ -8,8 +8,19 @@ import { redirect } from "next/navigation";
 import ReviewForm from "@/components/ReviewForm";
 import { getUserId } from "@/actions/user-actions";
 import TourLike from "@/components/TourLike";
+import { prisma } from "../../../../../prisma/prisma";
 
-export const dynamic = 'force-dynamic';
+export async function generateStaticParams() {
+    const userId = await prisma.tourPost.findMany({
+        select: {
+            id: true,
+        }
+    })
+
+    return userId.map((tour) => ({
+        id: tour.id.toString()
+    }))
+}
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
 
