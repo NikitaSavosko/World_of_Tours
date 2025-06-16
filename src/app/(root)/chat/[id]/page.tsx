@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: { id: string }; }) {
 
     const session = await auth()
     if (!session) redirect("/sign-in");
-    const { id } = params;
+    const { id } = await params;
     const userId = await getUserId()
     const messages = await getChatMessages(userId as string, id)
     const user = await getUser(id)
