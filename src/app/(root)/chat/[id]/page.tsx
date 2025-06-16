@@ -27,7 +27,7 @@ interface PageProps {
     };
 }
 
-const page = async ({ params }: PageProps) => {
+export default async function page({ params }: PageProps) {
 
     const session = await auth()
     if (!session) redirect("/sign-in");
@@ -72,5 +72,3 @@ const page = async ({ params }: PageProps) => {
         </div>
     )
 }
-
-export default page
