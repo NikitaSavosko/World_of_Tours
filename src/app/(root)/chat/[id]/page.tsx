@@ -21,7 +21,13 @@ export async function generateStaticParams() {
     }))
 }
 
-export default async function page({ params }: { params: { id: string } }) {
+interface PageProps {
+    params: {
+        id: string;
+    };
+}
+
+export default async function Page({ params }: PageProps) {
 
     const session = await auth()
     if (!session) redirect("/sign-in");
