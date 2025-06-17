@@ -24,21 +24,45 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
     providers: [
         Credentials({
-            async authorize(credentials) {
+            authorize: async (credentials) => {
                 const validatedFields = signInSchema.safeParse(credentials)
 
-                if (validatedFields.success) {
-                    const { email, password } = validatedFields.data
-
-                    const user = await GetUserByEmail(email)
-                    if (!user || !user.password) return null
-
-                    const passwordsMatch = await bcrypt.compare(password, user.password)
-                    if (passwordsMatch) return user
+                if (!validatedFields.success) {
+                    console.log("❌ Невалидные поля:", credentials)
+                    return null
                 }
 
-                return null
+                const { email, password } = validatedFields.data
+                const user = await GetUserByEmail(email)
+
+                if (!user) {
+                    console.log("❌ Пользователь не найден:", email)
+                    return null
+                }
+
+                if (!user.password) {
+                    console.log("❌ У пользователя нет пароля:", email)
+                    return null
+                }
+
+                const passwordsMatch = await bcrypt.compare(password, user.password)
+
+                if (!passwordsMatch) {
+                    console.log("❌ Пароль не совпадает:", email)
+                    return null
+                }
+
+                console.log("✅ Пользователь авторизован:", email)
+
+                // Возвращаем только нужные поля
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role
+                }
             }
+
         })
     ],
     session: { strategy: "jwt" },
