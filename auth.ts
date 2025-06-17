@@ -1,5 +1,4 @@
 import NextAuth, { DefaultSession } from "next-auth"
-import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { signInSchema } from "@/lib/validations"
 import { GetUserByEmail, GetUserById } from "./data/user"
@@ -23,7 +22,7 @@ declare module "@auth/core/jwt" {
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
-    providers: [Google, Credentials({
+    providers: [Credentials({
         async authorize(credentials) {
             const validatedFields = signInSchema.safeParse(credentials)
 
@@ -57,6 +56,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             return session
         },
         async jwt({ token }) {
+            console.log("JWT CALLBACK - token.sub", token.sub)
             if (!token.sub) return token;
 
             const existingUser = await GetUserById(token.sub)
