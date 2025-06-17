@@ -5,11 +5,9 @@ import { GetUserByEmail, GetUserById } from "./data/user"
 import bcrypt from "bcrypt"
 
 export type ExtendedUser = DefaultSession["user"] & {
-    id: string
     role: "ADMIN" | "USER"
 }
 
-// Расширяем типы
 declare module "next-auth" {
     interface Session {
         user: ExtendedUser
@@ -18,7 +16,6 @@ declare module "next-auth" {
 
 declare module "@auth/core/jwt" {
     interface JWT {
-        id?: string
         role?: "ADMIN" | "USER"
     }
 }
@@ -29,60 +26,64 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         Credentials({
             async authorize(credentials) {
                 const validatedFields = signInSchema.safeParse(credentials)
+
                 if (!validatedFields.success) {
-                    console.log("❌ Невалидные поля:", credentials)
-                    return null
+                    console.log("Invalid fields in authorize:", credentials)
+                    return null;
                 }
 
-                const { email, password } = validatedFields.data
-                const user = await GetUserByEmail(email)
+                if (validatedFields.success) {
+                    const { email, password } = validatedFields.data
 
-                if (!user || !user.password) return null
+                    const user = await GetUserByEmail(email)
+                    if (!user || !user.password) return null
 
-                const passwordsMatch = await bcrypt.compare(password, user.password)
-                if (!passwordsMatch) return null
-
-                return {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
+                    const passwordsMatch = await bcrypt.compare(password, user.password)
+                    if (passwordsMatch) return {
+                        id: user.id,
+                        email: user.email,
+                        name: user.name
+                    }
                 }
-            },
-        }),
+
+                return null
+            }
+        })
     ],
-
     session: { strategy: "jwt" },
-
     callbacks: {
-        async jwt({ token, user }) {
-            // Первый раз: после signIn
-            if (user) {
-                token.id = user.id
-                token.role = (user as any).role
+        async jwt({ token }) {
+            try {
+                console.log("JWT CALLBACK - token.sub", token.sub)
+
+                if (!token.sub) return token
+
+                const existingUser = await GetUserById(token.sub)
+                if (!existingUser) return token
+
+                token.role = existingUser.role
+                return token
+            } catch (error) {
+                console.error("JWT callback error:", error)
+                return token
             }
-
-            // Каждую последующую сессию — гарантируем наличие актуального user
-            if (!token.id) return token
-
-            const dbUser = await GetUserById(token.id)
-            if (dbUser) {
-                token.role = dbUser.role
-            }
-
-            return token
         },
 
         async session({ token, session }) {
-            if (session.user && token.id) {
-                session.user.id = token.id
-            }
+            try {
+                if (token.sub && session.user) {
+                    session.user.id = token.sub
+                }
 
-            if (session.user && token.role) {
-                session.user.role = token.role
-            }
+                if (token.role && session.user) {
+                    session.user.role = token.role
+                }
 
-            return session
-        },
-    },
+                return session
+            } catch (error) {
+                console.error("Session callback error:", error)
+                return session
+            }
+        }
+    }
 })
