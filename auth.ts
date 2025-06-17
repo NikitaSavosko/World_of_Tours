@@ -22,52 +22,59 @@ declare module "@auth/core/jwt" {
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     secret: process.env.NEXTAUTH_SECRET,
-    providers: [Credentials({
-        async authorize(credentials) {
-            const validatedFields = signInSchema.safeParse(credentials)
+    providers: [
+        Credentials({
+            async authorize(credentials) {
+                const validatedFields = signInSchema.safeParse(credentials)
 
-            if (validatedFields.success) {
-                const { email, password } = validatedFields.data
+                if (validatedFields.success) {
+                    const { email, password } = validatedFields.data
 
-                const user = await GetUserByEmail(email)
-                if (!user || !user.password) return null;
+                    const user = await GetUserByEmail(email)
+                    if (!user || !user.password) return null
 
-                const passwordsMatch = await bcrypt.compare(
-                    password,
-                    user.password
-                );
+                    const passwordsMatch = await bcrypt.compare(password, user.password)
+                    if (passwordsMatch) return user
+                }
 
-                if (passwordsMatch) return user;
+                return null
             }
-
-            return null
-        }
-    })],
+        })
+    ],
     session: { strategy: "jwt" },
     callbacks: {
-        async session({ token, session }) {
-            if (token.sub && session.user) {
-                session.user.id = token.sub
-            }
-
-            if (token.role && session.user) {
-                session.user.role = token.role;
-            }
-            return session
-        },
         async jwt({ token }) {
-            console.log("JWT CALLBACK - token.sub", token.sub)
-            console.log("token:", token)
-            if (!token.sub) return token;
+            try {
+                console.log("JWT CALLBACK - token.sub", token.sub)
 
-            const existingUser = await GetUserById(token.sub)
+                if (!token.sub) return token
 
-            if (!existingUser) return token;
-            console.log("existingUser", existingUser)
+                const existingUser = await GetUserById(token.sub)
+                if (!existingUser) return token
 
-            token.role = existingUser.role;
+                token.role = existingUser.role
+                return token
+            } catch (error) {
+                console.error("JWT callback error:", error)
+                return token
+            }
+        },
 
-            return token
+        async session({ token, session }) {
+            try {
+                if (token.sub && session.user) {
+                    session.user.id = token.sub
+                }
+
+                if (token.role && session.user) {
+                    session.user.role = token.role
+                }
+
+                return session
+            } catch (error) {
+                console.error("Session callback error:", error)
+                return session
+            }
         }
     }
 })
