@@ -22,6 +22,7 @@ declare module "@auth/core/jwt" {
 }
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+    secret: process.env.NEXTAUTH_SECRET,
     providers: [Google, Credentials({
         async authorize(credentials) {
             const validatedFields = signInSchema.safeParse(credentials)
