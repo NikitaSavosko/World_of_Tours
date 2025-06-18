@@ -13,7 +13,7 @@ const mulishFont = Mulish({
 });
 
 export const metadata: Metadata = {
-  title: "World of Tours",
+  title: "World of travel",
 };
 
 export default function RootLayout({
