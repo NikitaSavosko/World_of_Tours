@@ -34,7 +34,7 @@ const AdmHeader = () => {
                 <div className='w-full px-6 flex flex-row py-2 items-center justify-between'>
                     <div className='flex flex-row items-center gap-6'>
                         <Link href={''}>
-                            <h1 className='text-lg font-bold'>admin <span className='font-normal'>/</span> World of Tours</h1>
+                            <h1 className='text-lg font-bold'>admin <span className='font-normal'>/</span> World of travel</h1>
                         </Link>
                         <div className='hidden md:flex items-center gap-6'>
                             {

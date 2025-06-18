@@ -20,7 +20,7 @@ const page = async () => {
                         <div className='hover:bg-accent/70 transition-colors rounded-md px-4 py-2 w-full flex items-end justify-between'>
                             <div className='flex items-center gap-2'>
                                 <Avatar>
-                                    <AvatarImage loading='lazy' src={item.user.image ?? "/user.png"} />
+                                    <AvatarImage loading='lazy' src={item.user.image ?? "/user.png"} className='object-cover aspect-square size-full' />
                                 </Avatar>
                                 <div className='flex flex-col'>
                                     <p>{item.user.name}</p>

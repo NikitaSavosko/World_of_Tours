@@ -33,7 +33,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
     return (
         <div>
             <div className='flex items-center sticky z-50 top-[61px] bg-background w-full py-4 px-4 gap-4 border-b'>
-                <UserProfile id={id} />
+                <UserProfile id={id} image={user?.image} />
                 <p>{user?.name}</p>
             </div>
             <div className='flex flex-col gap-1 px-4 py-4 min-h-screen'>

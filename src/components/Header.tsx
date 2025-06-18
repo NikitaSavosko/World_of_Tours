@@ -19,7 +19,7 @@ async function Header() {
                 <div className='flex flex-row items-center justify-between py-3 px-6'>
                     <Link href='' className='flex flex-row items-center gap-2'>
                         <Plus size={22} className='animate-spin text-primary' />
-                        <p className='text-xl font-bold'>World of Tours</p>
+                        <p className='text-xl font-bold'>World of travel</p>
                     </Link>
                     <div className='flex items-center gap-2 max-md:hidden'>
                         {
