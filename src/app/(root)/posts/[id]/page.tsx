@@ -28,7 +28,7 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
     return (
         <div className='w-full min-h-screen h-full flex flex-col'>
-            <div className='container-indent border-b border-dashed '>
+            <div className='container-indent border-b border-dashed'>
                 {
                     post.map((item, index) => (
                         <div key={index} className='flex flex-col gap-2'>
@@ -37,7 +37,9 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
                                     <Image src={`${item.image}`} alt='image' width={500} height={500} loading='lazy' className='object-cover md:rounded-md aspect-square size-full' />
                                 </div>
                             )}
-                            <p className='whitespace-pre-wrap'>{item.content}</p>
+                            <div className='w-full max-md:px-4'>
+                                <p className='whitespace-pre-wrap'>{item.content}</p>
+                            </div>
                             <div className='flex flex-row gap-4 items-center'>
                                 <PostLike userId={user} post={item} />
                                 <div className='flex flex-row gap-2 items-center text-foreground/40 text-sm'>
